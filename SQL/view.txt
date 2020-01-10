@@ -1,0 +1,58 @@
+1. list nama pasien yang berasal dari surakarta dan dilayani oleh staff laki laki
+
+select * from pasien
+where alamat_pasien = "Solo"
+and id_pasien in (select id_pasien from melayani where id_staff in (select id_staff from staff where gender = 'L'))
+
+2. list nama dokter speasialis mata yang memeriksa pasien dari Karanganyar
+
+select distinct * from dokter
+where nama_spesialisasi = "Spesialis Mata"
+and id_dokter in (select id_dokter from memeriksa where id_pasien in (select id_pasien from pasien where alamat_pasien = "Karanganyar"))
+
+3. list nama pasien yang melakukan pemeriksaan tetapi tidak diberi resep obat
+
+select * from pasien 
+where id_pasien in (select id_pasien from administrasi where id_pemeriksaan IS NOT NULL and id_resep IS NULL)
+
+4. list nama pasien dirawat inap dan resep obat ditulis oleh dokter laki-laki
+
+select * from pasien
+where id_pasien in (select id_pasien from administrasi where id_kamar is not null)
+and id_pasien in (select id_pasien from resep where id_dokter in (select id_dokter from dokter where gender = 'L'))
+
+5. list nama pasien perempuan yang melakukan pemeriksaan dokter spesialis gigi
+
+select * from pasien 
+where gender = 'P'
+and id_pasien in (select id_pasien from memeriksa where id_dokter in (select id_dokter from dokter where nama_spesialisasi = "spesialis gigi"))
+
+6. list nama pasien yang melakukan pemeriksaan pada poli tapi tidak pada ICU dan dirawat oleh perawat laki laki
+
+select * from pasien
+where id_poli is not null
+and id_icu is null
+and id_perawat in (select id_perawat from perawat where gender = 'L')
+
+7. list nama dokter yang memiliki poli mata dan memeriksa pasien yang berasal dari Karanganyar
+
+select * from dokter
+where id_dokter in (select id_dokter from memiliki where id_poli in (select id_poli from poli where nama_poli = "poli mata"))
+and id_dokter in (select id_dokter from memeriksa where id_pasien in (select id_pasien from pasien where alamat_pasien = "karanganyar"))
+
+8. list perawat perempuan yang merawat pasien yang berada di ICU
+
+select * from perawat 
+where id_perawat in (select id_perawat from pasien where id_icu is not null)
+and gender = 'P'
+
+9. list nama perawat yang merawat pasien dirawat inap dan beradapa pada kamar kelas 1
+
+select * from perawat
+where id_perawat in (select id_perawat from pasien where id_pasien in (select id_pasien from administrasi where id_kamar in (select id_kamar from rawat_inap where nama_kelas = "Kelas 1")))
+
+10. list staff pada divisi gizi yang melayani pasien pada kamar kelas VVIP
+
+select * from staff
+where divisi = "Gizi"
+and id_staff in (select id_staff from melayani where id_pasien in (select id_pasien from administrasi where id_kamar in (select id_kamar from rawat_inap where nama_kelas = "VVIP")))
